@@ -9,6 +9,8 @@ let
       with pkgs;
       with pkgs.python2Packages;
     [
+      sqlitebrowser
+      sqlite-interactive
       ipython
       python
       scipy
