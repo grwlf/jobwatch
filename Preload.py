@@ -4,6 +4,8 @@ import re
 import os
 import sqlite3
 
+import DB
+
 def findLetters():
   p = subprocess.Popen(['find', 'data/raw', '-name', '[0-9]*.html'], stdout=subprocess.PIPE)
   stdout,stderr = p.communicate()
@@ -19,11 +21,11 @@ def insertLetters(letters):
         lambda m: m.group().strip().replace(' ', '_'),
         raw_string)
 
-  conn = sqlite3.connect('Jobwatch.db')
+  conn = sqlite3.connect(DB.name)
 
   c = conn.cursor()
 
-  c.execute('DELETE FROM letters');
+  c.execute('DELETE FROM {tn}'.format(tn=DB.tname));
 
   let_id = 0
 
@@ -48,8 +50,8 @@ def insertLetters(letters):
 
         print ("letter %s headline %s" % (l,text_notags[:15]))
 
-        c.execute('insert into letters(Id,Nam,Text) values(%d, "%s", "%s")' %
-                    (let_id, os.path.basename(l), text_notags))
+        c.execute('insert into %s(Id,Nam,Text,Tag) values(%d, "%s", "%s", "")' %
+                    (DB.tname, let_id, os.path.basename(l), text_notags))
 
     except:
       e = sys.exc_info()[0]
