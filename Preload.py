@@ -48,10 +48,12 @@ def insertLetters(letters):
 
         text_notags = re.sub(re.compile('<.*?>'), '', text)
 
-        print ("letter %s headline %s" % (l,text_notags[:15]))
+        text_notags_nogt = re.sub(re.compile('\n *&gt;.*\n'), '\n', text_notags, re.DOTALL)
+
+        print ("letter %s headline %s" % (l,text_notags_nogt[:15]))
 
         c.execute('insert into %s(Id,Nam,Text,Tag) values(%d, "%s", "%s", "")' %
-                    (DB.tname, let_id, os.path.basename(l), text_notags))
+                    (DB.tname, let_id, os.path.basename(l), text_notags_nogt))
 
     except:
       e = sys.exc_info()[0]
