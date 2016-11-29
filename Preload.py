@@ -46,14 +46,16 @@ def insertLetters(letters):
 
         text = r.group(1)
 
-        text_notags = re.sub(re.compile('<.*?>'), '', text)
+        text = re.sub(re.compile('<.*?>'), '', text)
 
-        text_notags_nogt = re.sub(re.compile('\n *&gt;.*\n'), '\n', text_notags, re.DOTALL)
+        text = re.sub(re.compile('^ *&gt;.*$', re.MULTILINE), '\n', text)
 
-        print ("letter %s headline %s" % (l,text_notags_nogt[:15]))
+        text = re.sub(re.compile('----*', re.MULTILINE), '', text)
+
+        print ("letter %s headline %s" % (l,text[:15]))
 
         c.execute('insert into %s(Id,Nam,Text,Tag) values(%d, "%s", "%s", "")' %
-                    (DB.tname, let_id, os.path.basename(l), text_notags_nogt))
+                    (DB.tname, let_id, os.path.basename(l), text))
 
     except:
       e = sys.exc_info()[0]
