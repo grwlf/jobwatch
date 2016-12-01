@@ -50,7 +50,17 @@ def insertLetters(letters):
 
         text = re.sub(re.compile('^ *&gt;.*$', re.MULTILINE), '\n', text)
 
-        text = re.sub(re.compile('----*', re.MULTILINE), '', text)
+        text = re.sub(re.compile('--*', re.MULTILINE), '', text)
+
+        text = re.sub(re.compile('__*', re.MULTILINE), '', text)
+
+        text = re.sub(re.compile('&quot;', re.MULTILINE), '', text)
+
+        # text = re.sub(re.compile(',|\(|\)|\#|\:|\.', re.MULTILINE), '', text)
+
+        text = re.sub(r'[^\w\s]','',text)
+
+        text = text.lower()
 
         print ("letter %s headline %s" % (l,text[:15]))
 
