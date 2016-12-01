@@ -46,26 +46,20 @@ def insertLetters(letters):
 
         text = r.group(1)
 
+        text = text.lower()
+
         text = re.sub(re.compile('<.*?>'), '', text)
 
         text = re.sub(re.compile('^ *&gt;.*$', re.MULTILINE), '\n', text)
 
-        text = re.sub(re.compile('--*', re.MULTILINE), '', text)
+        text = re.sub(re.compile('&.*;', re.MULTILINE), '', text)
 
-        text = re.sub(re.compile('__*', re.MULTILINE), '', text)
-
-        text = re.sub(re.compile('&quot;', re.MULTILINE), '', text)
-
-        # text = re.sub(re.compile(',|\(|\)|\#|\:|\.', re.MULTILINE), '', text)
-
-        text = re.sub(r'[^\w\s]','',text)
-
-        text = text.lower()
+        text = " ".join(re.findall(r'([a-z\']+)', text))
 
         print ("letter %s headline %s" % (l,text[:15]))
 
-        c.execute('insert into %s(Id,Nam,Text,Tag) values(%d, "%s", "%s", "")' %
-                    (DB.tname, let_id, os.path.basename(l), text))
+        c.execute('insert into %s(Id, Nam, Text, Tag) values(%d, "%s", "%s", "")' %
+                    (DB.tname, let_id, os.path.splitext(os.path.basename(l))[0], text))
 
     except:
       e = sys.exc_info()[0]
@@ -75,6 +69,19 @@ def insertLetters(letters):
   conn.commit()
 
 
+def markJobLetters():
+  conn = sqlite3.connect(DB.name)
+  c = conn.cursor()
+  known_offers = ['118175', '124105']
+  for o in known_offers:
+    c.execute('UPDATE {tn} SET Tag = "offer" WHERE Nam = "{onam}"'.format(
+        tn = DB.tname, onam = o))
+
+  conn.commit()
+
+
 l = findLetters()
 
 insertLetters(l)
+markJobLetters()
+
